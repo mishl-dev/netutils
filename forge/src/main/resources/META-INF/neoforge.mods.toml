@@ -7,8 +7,8 @@ modId = "netutils"
 version = "${version}"
 displayName = "NetUtils"
 logoFile = "icon.png"
-description = "A UI utility mod for dupe hunting."
-displayURL = "https://github.com/mishl-dev/NetUtils"
+description = "Advanced network debugging and packet analysis utility."
+displayURL = "https://github.com/mishl-dev/netutils"
 authors = "mishl"
 
 [[mixins]]

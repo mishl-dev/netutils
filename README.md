@@ -1,10 +1,10 @@
 # NetUtils
 
-A Network utility mod for dupe hunting and packet manipulation.
+A networking utility for protocol debugging and state synchronization testing.
 
 ## Features
 - **Packet Control**: Delay or toggle outgoing packets.
-- **De-sync**: Intentionally desynchronize your client from the server (Ghost Mode).
+- **Synchronization**: Simulate client-server desynchronization for state handling tests.
 - **Inventory Control**: Close inventory screens without sending packets to the server.
 - **Resource Pack Control**: Bypass or force-deny server resource packs.
 

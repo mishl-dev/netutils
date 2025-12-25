@@ -4,12 +4,12 @@
     "version": "${version}",
     "name": "NetUtils",
     "icon": "icon.png",
-    "description": "A UI utility mod for dupe hunting.",
+    "description": "Advanced network debugging and packet analysis utility.",
     "authors": [
         "mishl"
     ],
     "contact": {
-        "homepage": "https://github.com/mishl-dev/NetUtils"
+        "homepage": "https://github.com/mishl-dev/netutils"
     },
     "license": "MIT",
     "environment": "client",
