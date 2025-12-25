@@ -27,9 +27,6 @@ object NetUtilsCommon {
     fun init() {
         LOGGER.info("Initializing NetUtils")
         
-        // Check for updates (GitHub API only - no auto-download)
-        UpdateChecker.checkForUpdates()
-        
         // Register screen input handler for EditBox functionality
         org.netutils.gui.ScreenInputHandler.register()
         
