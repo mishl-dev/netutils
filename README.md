@@ -2,8 +2,10 @@
 
 > **This tool is for educational and debugging purposes only.** Using it to gain an unfair advantage or perform exploits (such as item duplication) on multiplayer servers is a violation of most server rules and platform terms of service. The developers do not condone cheating/duping. Use this mod at your own risk and only where you have explicit permission.
 
-
 A networking utility for protocol debugging and state synchronization testing.
+
+<img width="1365" height="697" alt="image" src="https://github.com/user-attachments/assets/b84ae327-eb51-4112-ab92-cca66619e079" />
+
 
 
 ## Features
