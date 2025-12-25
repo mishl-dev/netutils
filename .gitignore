@@ -1,0 +1,41 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.code-workspace
+
+# Fabric/Loom
+run/
+*.log
+remappedSrc/
+
+# Build artifacts
+build_log.txt
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.tmp
+
+# Eclipse
+.settings/
+.classpath
+.project
+eclipse/
+bin/
+
+.loom-cache/
+.qmap/
+.kotlin/

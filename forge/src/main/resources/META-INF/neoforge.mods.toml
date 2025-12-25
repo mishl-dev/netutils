@@ -1,0 +1,36 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[5,)"
+license = "MIT"
+
+[[mods]]
+modId = "netutils"
+version = "${version}"
+displayName = "NetUtils"
+logoFile = "icon.png"
+description = "A UI utility mod for dupe hunting."
+displayURL = "https://github.com/mishl-dev/NetUtils"
+authors = "mishl"
+
+[[mixins]]
+config = "netutils-common.mixins.json"
+
+[[dependencies.netutils]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.netutils]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.netutils]]
+modId = "architectury"
+mandatory = true
+versionRange = "[13.0,)"
+ordering = "NONE"
+side = "CLIENT"

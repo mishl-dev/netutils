@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "org.netutils.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "client": [
+        "ScreenMixin",
+        "ChatScreenMixin",
+        "CommandSuggestionsMixin",
+        "ClientConnectionMixin",
+        "ClientCommonNetworkHandlerMixin",
+        "BookEditScreenMixin",
+        "BookScreenMixin",
+        "SignEditScreenMixin",
+        "MultiplayerScreenMixin",
+        "HandledScreenMixin",
+        "accessor.ScreenAccessor",
+        "accessor.ClientConnectionAccessor",
+        "accessor.KeyMappingAccessor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

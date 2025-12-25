@@ -1,0 +1,38 @@
+{
+    "schemaVersion": 1,
+    "id": "netutils",
+    "version": "${version}",
+    "name": "NetUtils",
+    "icon": "icon.png",
+    "description": "A UI utility mod for dupe hunting.",
+    "authors": [
+        "mishl"
+    ],
+    "contact": {
+        "homepage": "https://github.com/mishl-dev/NetUtils"
+    },
+    "license": "MIT",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            {
+                "adapter": "kotlin",
+                "value": "org.netutils.fabric.NetUtilsFabric"
+            }
+        ],
+        "modmenu": [
+            "org.netutils.fabric.NetUtilsModMenuImpl"
+        ]
+    },
+    "mixins": [
+        "netutils-common.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.15.0",
+        "fabric": "*",
+        "fabric-language-kotlin": ">=1.12.0",
+        "minecraft": ">=1.21.0",
+        "java": ">=21",
+        "architectury": ">=13.0.0"
+    }
+}
