@@ -1,4 +1,4 @@
-package org.netutils.forge
+package org.netutils.neoforge
 
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.StringWidget

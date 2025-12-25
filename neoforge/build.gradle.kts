@@ -30,7 +30,7 @@ dependencies {
     modImplementation("dev.architectury:architectury-neoforge:${rootProject.property("architectury_version")}")
     
     common(project(":common", "namedElements")) { isTransitive = false }
-    shadowCommon(project(":common", "transformProductionForge")) { isTransitive = false }
+    shadowCommon(project(":common", "transformProductionNeoForge")) { isTransitive = false }
 }
 
 kotlin {

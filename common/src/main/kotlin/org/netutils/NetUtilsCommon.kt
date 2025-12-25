@@ -13,7 +13,7 @@ import org.netutils.screen.ScreenSaver
 
 /**
  * NetUtils - Common
- * Cross-platform initialization code shared between Fabric and Forge.
+ * Cross-platform initialization code shared between Fabric and NeoForge.
  */
 object NetUtilsCommon {
     const val MOD_ID = "netutils"

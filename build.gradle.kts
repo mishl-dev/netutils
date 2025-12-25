@@ -31,7 +31,7 @@ tasks.register("collectJars", Copy::class) {
     dependsOn(subprojects.map { it.tasks.named("build") })
     
     from(project(":fabric").tasks.named("remapJar").map { (it as org.gradle.jvm.tasks.Jar).archiveFile })
-    from(project(":forge").tasks.named("remapJar").map { (it as org.gradle.jvm.tasks.Jar).archiveFile })
+    from(project(":neoforge").tasks.named("remapJar").map { (it as org.gradle.jvm.tasks.Jar).archiveFile })
     
     into(layout.buildDirectory.dir("libs"))
     

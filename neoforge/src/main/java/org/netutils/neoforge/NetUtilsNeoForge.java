@@ -1,4 +1,4 @@
-package org.netutils.forge;
+package org.netutils.neoforge;
 
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
@@ -10,8 +10,8 @@ import org.netutils.NetUtilsCommon;
  * NeoForge entry point for NetUtils.
  */
 @Mod(NetUtilsCommon.MOD_ID)
-public class NetUtilsForge {
-    public NetUtilsForge() {
+public class NetUtilsNeoForge {
+    public NetUtilsNeoForge() {
         NetUtilsCommon.INSTANCE.init();
         
         if (FMLEnvironment.getDist().isClient()) {

@@ -11,4 +11,4 @@ rootProject.name = "netutils-universal"
 
 include("common")
 include("fabric")
-include("forge")
+include("neoforge")
