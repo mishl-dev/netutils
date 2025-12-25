@@ -35,7 +35,12 @@ tasks.register("collectJars", Copy::class) {
     
     into(layout.buildDirectory.dir("libs"))
     
-    rename { "netutils-${it}" }
+    val mcVer = rootProject.property("minecraft_version")
+    
+    rename { 
+        val nameWithoutExt = it.removeSuffix(".jar")
+        "netutils-${nameWithoutExt}+${mcVer}.jar" 
+    }
     
     doLast {
         println("Universal compilation complete. Jars collected in: ${layout.buildDirectory.dir("libs").get()}")
