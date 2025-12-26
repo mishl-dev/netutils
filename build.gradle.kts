@@ -24,7 +24,7 @@ subprojects {
 
 allprojects {
     group = "org.netutils"
-    version = "1.0.0"
+    version = rootProject.property("mod_version")
 }
 
 tasks.register("collectJars", Copy::class) {

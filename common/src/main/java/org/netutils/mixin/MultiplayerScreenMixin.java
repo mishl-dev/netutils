@@ -24,27 +24,28 @@ public abstract class MultiplayerScreenMixin extends Screen {
         if (SharedVariables.enabled) {
             ScreenAccessor accessor = (ScreenAccessor) this;
 
-            // Center X position
-            int centerX = this.width / 2;
+            // Position in bottom-left corner
+            int leftX = 5;
             int buttonWidth = 160;
+            int bottomY = this.height - 30; // First button from bottom
 
-            // Bypass Resource Pack Toggle - positioned above the server list area
-            accessor.invokeAddRenderableWidget(Button.builder(
-                    Component.literal("Bypass Resource Pack: " + (SharedVariables.bypassResourcePack ? "ON" : "OFF")),
-                    (button) -> {
-                        SharedVariables.bypassResourcePack = !SharedVariables.bypassResourcePack;
-                        button.setMessage(Component.literal(
-                                "Bypass Resource Pack: " + (SharedVariables.bypassResourcePack ? "ON" : "OFF")));
-                    }).bounds(centerX - buttonWidth / 2, 50, buttonWidth, 20).build());
-
-            // Force Deny Toggle
+            // Force Deny Toggle - bottom button
             accessor.invokeAddRenderableWidget(Button.builder(
                     Component.literal("Force Deny: " + (SharedVariables.resourcePackForceDeny ? "ON" : "OFF")),
                     (button) -> {
                         SharedVariables.resourcePackForceDeny = !SharedVariables.resourcePackForceDeny;
                         button.setMessage(Component
                                 .literal("Force Deny: " + (SharedVariables.resourcePackForceDeny ? "ON" : "OFF")));
-                    }).bounds(centerX - buttonWidth / 2, 75, buttonWidth, 20).build());
+                    }).bounds(leftX, bottomY, buttonWidth, 20).build());
+
+            // Bypass Resource Pack Toggle - above Force Deny
+            accessor.invokeAddRenderableWidget(Button.builder(
+                    Component.literal("Bypass Resource Pack: " + (SharedVariables.bypassResourcePack ? "ON" : "OFF")),
+                    (button) -> {
+                        SharedVariables.bypassResourcePack = !SharedVariables.bypassResourcePack;
+                        button.setMessage(Component.literal(
+                                "Bypass Resource Pack: " + (SharedVariables.bypassResourcePack ? "ON" : "OFF")));
+                    }).bounds(leftX, bottomY - 22, buttonWidth, 20).build());
         }
     }
 }
