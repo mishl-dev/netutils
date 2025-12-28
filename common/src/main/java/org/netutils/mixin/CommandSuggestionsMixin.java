@@ -43,13 +43,13 @@ public abstract class CommandSuggestionsMixin {
         // Check if the input starts with our command prefix
         if (text.startsWith(ClientCommands.PREFIX)) {
             // Get suggestions from our command system
-            java.util.List<String> suggestions = ClientCommands.INSTANCE.getSuggestions(text);
+            ClientCommands.SuggestionsResult result = ClientCommands.INSTANCE.getSuggestions(text);
+            java.util.List<String> suggestions = result.getSuggestions();
 
             if (!suggestions.isEmpty()) {
-                // Create suggestion from our commands
-                int start = 0;
+                // Use the start index from our suggestion result
                 com.mojang.brigadier.suggestion.SuggestionsBuilder builder = new com.mojang.brigadier.suggestion.SuggestionsBuilder(
-                        text, start);
+                        text, result.getStartIndex());
 
                 for (String suggestion : suggestions) {
                     builder.suggest(suggestion);

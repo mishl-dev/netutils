@@ -23,8 +23,43 @@ import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 public class ClientConnectionMixin {
     
     /**
+     * Check if a packet is vital (keepalive/pong) and should not be blocked/delayed.
+     */
+    private boolean isVitalPacket(Packet<?> packet) {
+        return (packet instanceof ServerboundKeepAlivePacket || packet instanceof ServerboundPongPacket)
+                && SharedVariables.allowKeepAlive;
+    }
+    
+    /**
+     * Handle packet interception logic for blocking/queueing.
+     * @return true if the packet should be cancelled (blocked or queued)
+     */
+    private boolean handlePacketInterception(Packet<?> packet) {
+        boolean isVital = isVitalPacket(packet);
+
+        // Handle "Blocking" mode - Block ALL packets (except vital) if sendUIPackets is false
+        if (!SharedVariables.sendUIPackets && !isVital) {
+            return true; // Cancel
+        }
+
+        // Handle "Delay/Queueing" mode - Queue ALL packets (except vital) if delayUIPackets is true
+        if (SharedVariables.delayUIPackets && !isVital) {
+            SharedVariables.delayedUIPackets.add(packet);
+            return true; // Cancel
+        }
+
+        // Special handling for sign editing (bypass)
+        if (!SharedVariables.shouldEditSign && packet instanceof ServerboundSignUpdatePacket) {
+            SharedVariables.shouldEditSign = true;
+            return true; // Cancel
+        }
+
+        return false; // Don't cancel, let it through
+    }
+    
+    /**
      * Intercepts packets at the basic send method.
-     * This catches all packets being sent through the connection.
+     * This is the primary packet send method in Connection.
      */
     @Inject(
         method = "send(Lnet/minecraft/network/protocol/Packet;)V",
@@ -32,32 +67,9 @@ public class ClientConnectionMixin {
         cancellable = true
     )
     private void onSend(Packet<?> packet, CallbackInfo ci) {
-        // Identify vital packets that should never be blocked/delayed (to prevent timeouts)
-        boolean isVitalPacket = (packet instanceof ServerboundKeepAlivePacket || packet instanceof ServerboundPongPacket)
-                                && SharedVariables.allowKeepAlive;
-
-        // Handle "Blocking" mode - Block ALL packets (except vital) if sendUIPackets is false
-        if (!SharedVariables.sendUIPackets && !isVitalPacket) {
-            // Log to console for debugging, but commenting out to prevent spam
-            // System.out.println("Blocking packet: " + packet.getClass().getSimpleName());
-            ci.cancel();
-            return;
-        }
-
-        // Handle "Delay/Queueing" mode - Queue ALL packets (except vital) if delayUIPackets is true
-        if (SharedVariables.delayUIPackets && !isVitalPacket) {
-            SharedVariables.delayedUIPackets.add(packet);
-            // System.out.println("Queuing packet: " + packet.getClass().getSimpleName());
-            ci.cancel();
-            return;
-        }
-
-        // Special handling for sign editing (bypass)
-        // Corrected logic: Use SharedVariables to track state
-        if (!SharedVariables.shouldEditSign && packet instanceof ServerboundSignUpdatePacket) {
-            SharedVariables.shouldEditSign = true;
-            // System.out.println("Blocking sign update packet explicitly");
+        if (handlePacketInterception(packet)) {
             ci.cancel();
         }
     }
 }
+

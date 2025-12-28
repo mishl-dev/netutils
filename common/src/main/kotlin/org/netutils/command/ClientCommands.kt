@@ -343,24 +343,211 @@ object ClientCommands {
     }
     
     /**
-     * Get command suggestions for autocomplete.
+     * Represents the result of a suggestion request.
      */
-    fun getSuggestions(input: String): List<String> {
-        if (!input.startsWith(PREFIX)) return emptyList()
+    data class SuggestionsResult(val suggestions: List<String>, val startIndex: Int)
+
+    /**
+     * Get command suggestions for autocomplete.
+     * Provides both command name completion and parameter-level completion.
+     */
+    fun getSuggestions(input: String): SuggestionsResult {
+        if (!input.startsWith(PREFIX)) return SuggestionsResult(emptyList(), 0)
         
         val command = input.substring(PREFIX.length)
         
         // If empty, return all commands
         if (command.isEmpty()) {
-            return commandNames.map { PREFIX + it }
+            return SuggestionsResult(commandNames.map { it }, PREFIX.length)
         }
         
-        // Return matching commands
-        return commandNames
-            .filter { it.startsWith(command, ignoreCase = true) }
-            .map { PREFIX + it }
+        // Split into command and args
+        // Using a regex that preserves whitespace to correctly calculate indices
+        val parts = command.split(Regex("(?<=\\s)|(?=\\s+)"))
+        val cmdName = parts[0].trim().lowercase()
+        
+        // If still typing the command name (no space yet), suggest matching commands
+        if (parts.size == 1 && !command.endsWith(" ")) {
+            return SuggestionsResult(
+                commandNames.filter { it.startsWith(cmdName, ignoreCase = true) },
+                PREFIX.length
+            )
+        }
+        
+        // Get the current argument being typed and its start index
+        var currentOffset = PREFIX.length
+        var argIndex = 0
+        var currentArg = ""
+        var lastArgStartIndex = PREFIX.length
+        
+        val argParts = command.split(Regex("\\s+"))
+        val isTrailingSpace = input.endsWith(" ")
+        
+        if (isTrailingSpace) {
+            argIndex = argParts.size
+            currentArg = ""
+            lastArgStartIndex = input.length
+        } else {
+            argIndex = argParts.size - 1
+            currentArg = argParts.last()
+            lastArgStartIndex = input.lastIndexOf(currentArg)
+        }
+
+        // Get parameter suggestions for the command
+        val cmdForParams = argParts[0].lowercase()
+        val paramSuggestions = getParameterSuggestions(cmdForParams, argIndex, currentArg)
+        
+        return SuggestionsResult(paramSuggestions, lastArgStartIndex)
     }
     
+    /**
+     * Get parameter suggestions based on command and argument position.
+     */
+    private fun getParameterSuggestions(cmdName: String, argIndex: Int, currentArg: String): List<String> {
+        return when (cmdName) {
+            // ^click <slot> <button> [type]
+            "click" -> when (argIndex) {
+                1 -> getSlotSuggestions(currentArg)
+                2 -> listOf("0", "1").filter { it.startsWith(currentArg) } // 0=left, 1=right
+                3 -> listOf("pickup", "shift", "quick_move", "swap", "clone", "throw", "quick_craft", "pickup_all")
+                    .filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            
+            // ^trade <id>
+            "trade" -> when (argIndex) {
+                1 -> getTradeSuggestions(currentArg)
+                else -> emptyList()
+            }
+            
+            // ^button <id>
+            "button" -> when (argIndex) {
+                1 -> (0..10).map { it.toString() }.filter { it.startsWith(currentArg) }
+                else -> emptyList()
+            }
+            
+            // ^rawsend <times> <packet> [args...]
+            "rawsend" -> when (argIndex) {
+                1 -> listOf("1", "5", "10", "50", "100").filter { it.startsWith(currentArg) }
+                2 -> PacketRegistry.getAllPacketKeys().filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> getPacketArgSuggestions(getArgAt(argIndex - 2), argIndex - 2, currentArg)
+            }
+            
+            // ^loop <times> <command> [args...]
+            "loop" -> when (argIndex) {
+                1 -> listOf("1", "5", "10", "20", "50", "100").filter { it.startsWith(currentArg) }
+                2 -> commandNames.filter { it != "loop" && it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            
+            // ^swing [hand]
+            "swing" -> when (argIndex) {
+                1 -> listOf("main_hand", "off_hand").filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            
+            // ^drop [all]
+            "drop" -> when (argIndex) {
+                1 -> listOf("all").filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            
+            // ^save [name] / ^load [name]
+            "save" -> when (argIndex) {
+                1 -> getSavedScreenSuggestions(currentArg) + listOf("default").filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            "load" -> when (argIndex) {
+                1 -> getSavedScreenSuggestions(currentArg)
+                else -> emptyList()
+            }
+            
+            else -> emptyList()
+        }
+    }
+    
+    /**
+     * Get slot number suggestions based on current container.
+     */
+    private fun getSlotSuggestions(currentArg: String): List<String> {
+        val menu = mc.player?.containerMenu
+        val slotCount = menu?.slots?.size ?: 45
+        
+        // Common slots based on input prefix
+        val suggestions = mutableListOf<String>()
+        
+        // If empty, show common slot ranges
+        if (currentArg.isEmpty()) {
+            suggestions.addAll(listOf("0", "1", "2", "36", "37", "38", "39", "40", "44"))
+        } else {
+            // Filter slots that start with the current input
+            for (i in 0 until slotCount) {
+                if (i.toString().startsWith(currentArg)) {
+                    suggestions.add(i.toString())
+                }
+                if (suggestions.size >= 10) break
+            }
+        }
+        
+        return suggestions.take(10)
+    }
+    
+    /**
+     * Get trade ID suggestions based on current merchant menu.
+     */
+    private fun getTradeSuggestions(currentArg: String): List<String> {
+        val menu = mc.player?.containerMenu
+        if (menu is MerchantMenu) {
+            return menu.offers.indices.map { it.toString() }.filter { it.startsWith(currentArg) }
+        }
+        return (0..10).map { it.toString() }.filter { it.startsWith(currentArg) }
+    }
+    
+    /**
+     * Get saved screen names for load/save commands.
+     */
+    private fun getSavedScreenSuggestions(currentArg: String): List<String> {
+        return try {
+            ScreenSaver.listSlots().filter { it.startsWith(currentArg, ignoreCase = true) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+    
+    /**
+     * Get packet-specific argument suggestions.
+     */
+    private fun getPacketArgSuggestions(packetKey: String?, argIndex: Int, currentArg: String): List<String> {
+        if (packetKey == null) return emptyList()
+        
+        return when (packetKey) {
+            "play.hand_swing" -> when (argIndex) {
+                0 -> listOf("main_hand", "off_hand").filter { it.startsWith(currentArg, ignoreCase = true) }
+                else -> emptyList()
+            }
+            "play.update_selected_slot" -> when (argIndex) {
+                0 -> (0..8).map { it.toString() }.filter { it.startsWith(currentArg) }
+                else -> emptyList()
+            }
+            "play.close_handled_screen" -> when (argIndex) {
+                0 -> listOf((mc.player?.containerMenu?.containerId ?: 0).toString())
+                else -> emptyList()
+            }
+            else -> emptyList()
+        }
+    }
+    
+    /**
+     * Helper to safely get argument at index from stored context.
+     * Used for rawsend packet arg completion.
+     */
+    private var lastRawsendPacket: String? = null
+    private fun getArgAt(index: Int): String? {
+        // This is a simplified implementation
+        // In a full implementation, you'd track the full command context
+        return lastRawsendPacket
+    }
+
     private fun sendMessage(message: String) {
         mc.player?.displayClientMessage(Component.literal(message), false)
     }
