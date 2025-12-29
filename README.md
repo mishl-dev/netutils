@@ -6,6 +6,7 @@ A powerful networking utility for Minecraft protocol debugging, state synchroniz
 > **This tool is for educational and debugging purposes only.** Using it to gain an unfair advantage or perform exploits on multiplayer servers is a violation of most server rules and platform terms of service. The developers do not condone cheating/duping. Use this mod at your own risk and only where you have explicit permission.
 
 ---
+<img width="1365" height="697" alt="image" src="https://github.com/user-attachments/assets/7984b483-bd84-4a2f-8425-b9e8cac78f1b" />
 
 ## What specifically does this project provide?
 
